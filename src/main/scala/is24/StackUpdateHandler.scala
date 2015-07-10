@@ -19,9 +19,9 @@ object StackUpdateEvent {
 }
 
 
-class Handler {
+class StackUpdateHandler {
 
-  def myHandler(event: SNSEvent, context: Context): String  = {
+  def handler(event: SNSEvent, context: Context): String  = {
     val logger = context.getLogger
 
     val records: List[SNSRecord] = event.getRecords.toList
