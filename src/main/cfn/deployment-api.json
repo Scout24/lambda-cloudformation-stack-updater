@@ -54,6 +54,43 @@
         ]
       }
     },
+    "stackUpdateRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "lambdaStackUpdatePolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "*"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "updateStackFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties" : {
@@ -64,7 +101,7 @@
         "Description" : "updates a stack using cloudformation",
         "Handler" : "is24.StackUpdateHandler::handler",
         "MemorySize" : 512,
-        "Role" : "arn:aws:iam::744969810879:role/lambda_basic_execution_all",
+        "Role" : {"Fn::GetAtt" : ["stackUpdateRole", "Arn"] },
         "Runtime" : "java8",
         "Timeout" : 15
       }
