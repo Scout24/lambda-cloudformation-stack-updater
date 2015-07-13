@@ -2,8 +2,8 @@ package is24
 
 import com.amazonaws.regions.RegionUtils
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClient
-import com.amazonaws.services.cloudformation.model.{Parameter, UpdateStackRequest}
-import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.cloudformation.model.{UpdateStackResult, Parameter, UpdateStackRequest}
+import com.amazonaws.services.lambda.runtime.{LambdaLogger, Context}
 import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import play.api.libs.json._
 
@@ -24,7 +24,7 @@ class StackUpdateHandler {
 
     event.getRecords.toList
       .map(_.getSNS.getMessage)
-      .map(Json.parse(_).validate[StackUpdateEvent])
+      .map(m => Json.parse(m).validate[StackUpdateEvent])
       .foreach {
         case JsSuccess(StackUpdateEvent(name, region, params), _) =>
           updateStack(name, region, params)
@@ -38,6 +38,7 @@ class StackUpdateHandler {
     val cloudFormation = new AmazonCloudFormationClient().withRegion[AmazonCloudFormationClient](RegionUtils.getRegion(region))
     cloudFormation.updateStack(new UpdateStackRequest()
       .withStackName(stackName)
+      .with
       .withUsePreviousTemplate(true)
       .withCapabilities("CAPABILITY_IAM")
       .withParameters(params.map{case (key, value) => new Parameter().withParameterKey(key).withParameterValue(value)}))
