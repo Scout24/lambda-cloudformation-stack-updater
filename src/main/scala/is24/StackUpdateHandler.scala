@@ -1,18 +1,16 @@
 package is24
 
-import com.amazonaws.regions.Region._
-import com.amazonaws.regions.Regions._
-import com.amazonaws.regions.{Region, Regions}
+import com.amazonaws.regions.RegionUtils
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClient
 import com.amazonaws.services.cloudformation.model.{Parameter, UpdateStackRequest}
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.events.SNSEvent
-import com.amazonaws.services.lambda.runtime.events.SNSEvent.SNSRecord
 import play.api.libs.json._
+
 import scala.collection.JavaConversions._
 
 
-case class StackUpdateEvent(stackName: String, version: String)
+case class StackUpdateEvent(stackName: String, region: String, params: Map[String, String])
 
 object StackUpdateEvent {
   implicit val reads = Json.format[StackUpdateEvent]
@@ -21,32 +19,28 @@ object StackUpdateEvent {
 
 class StackUpdateHandler {
 
-  def handler(event: SNSEvent, context: Context): String  = {
+  def handler(event: SNSEvent, context: Context): Unit  = {
     val logger = context.getLogger
 
-    val records: List[SNSRecord] = event.getRecords.toList
-    records.foreach { r =>
-      logger.log(" r.getEventSource : " +  r.getEventSource)
-      logger.log(" r.getSNS.getMessage : " +  r.getSNS.getMessage)
-      Json.parse(r.getSNS.getMessage).validate[StackUpdateEvent] match {
-        case JsSuccess(StackUpdateEvent(stackName, version), _) =>
-          logger.log(s"got update for stack: ${stackName} with ${version}")
-          val cf = new AmazonCloudFormationClient()
-          cf.setRegion(getRegion(EU_CENTRAL_1))
-          val r = new UpdateStackRequest()
-          r.setStackName(stackName)
-          r.setUsePreviousTemplate(true)
-          r.setCapabilities(Seq("CAPABILITY_IAM"))
-
-          r.setParameters(Seq(new Parameter().withParameterKey("dockerImageVersion").withParameterValue(version)))
-          val result = cf.updateStack(r)
-        case t => logger.log("error: " + t)
+    event.getRecords.toList
+      .map(_.getSNS.getMessage)
+      .map(Json.parse(_).validate[StackUpdateEvent])
+      .foreach {
+        case JsSuccess(StackUpdateEvent(name, region, params), _) =>
+          updateStack(name, region, params)
+          logger.log(s"update stack $name with params: $params successfully triggered")
+        case t =>
+          logger.log("error: " + t)
       }
+  }
 
-
-    }
-
-    "Hello"
+  private def updateStack(stackName: String, region: String, params: Map[String, String]) = {
+    val cloudFormation = new AmazonCloudFormationClient().withRegion[AmazonCloudFormationClient](RegionUtils.getRegion(region))
+    cloudFormation.updateStack(new UpdateStackRequest()
+      .withStackName(stackName)
+      .withUsePreviousTemplate(true)
+      .withCapabilities("CAPABILITY_IAM")
+      .withParameters(params.map{case (key, value) => new Parameter().withParameterKey(key).withParameterValue(value)}))
   }
 
 }
