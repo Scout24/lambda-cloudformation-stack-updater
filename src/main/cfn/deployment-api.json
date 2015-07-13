@@ -1,0 +1,111 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Interface to trigger stack updates and listen to results from another account.",
+  "Parameters": {
+    "triggeringUserArn": {
+      "Type": "String",
+      "Description": "ARN of the principal that will send stack update messages and listen for results",
+      "AllowedPattern": "arn:aws:iam::[0-9]{12}:[\\S]+",
+      "ConstraintDescription": "must be a valid Amazon Resource Name e.g. arn:aws:iam::123456789012:role/cld-chain",
+      "Default": "arn:aws:iam::202084488265:user/is24-teamcity"
+    }
+  },
+  "Resources": {
+    "inputTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "Stack update messages",
+        "TopicName": "stackUpdateMessages",
+        "Subscription": [
+          {
+            "Endpoint": { "Fn::GetAtt": [
+              "updateStackFunction",
+              "Arn"
+            ]},
+            "Protocol": "lambda"
+          }
+        ]
+      }
+    },
+    "inputTopicPolicy": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "triggeringUserArn"
+                }
+              },
+              "Action": "sns:Publish",
+              "Resource": {
+                "Ref": "inputTopic"
+              }
+            }
+          ]
+        },
+        "Topics": [
+          {
+            "Ref": "inputTopic"
+          }
+        ]
+      }
+    },
+    "updateStackFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties" : {
+        "Code" : {
+          "S3Bucket" : "de.is24.val.update-stack-function",
+          "S3Key" : "update-stack-function-1.0.0.jar"
+        },
+        "Description" : "updates a stack using cloudformation",
+        "Handler" : "is24.StackUpdateHandler::handler",
+        "MemorySize" : 512,
+        "Role" : "arn:aws:iam::744969810879:role/lambda_basic_execution_all",
+        "Runtime" : "java8",
+        "Timeout" : 15
+      }
+    },
+    "resultTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "Stack update result messages",
+        "TopicName": "stackUpdateResultMessages",
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Fn::GetAtt": [
+                "resultQueue",
+                "Arn"
+              ]
+            },
+            "Protocol": "sqs"
+          }
+        ]
+      }
+    },
+    "resultQueue": {
+      "Type": "AWS::SQS::Queue"
+    }
+  },
+  "Outputs": {
+    "inputTopicARN": {
+      "Value": {
+        "Ref": "inputTopic"
+      },
+      "Description": "Topic ARN to send stack update messages to"
+    },
+    "resultQueueARN": {
+      "Value": {
+        "Fn::GetAtt": [
+          "resultQueue",
+          "Arn"
+        ]
+      },
+      "Description": "Queue that CloudFormation streams updates about stcak update to"
+    }
+  }
+}
