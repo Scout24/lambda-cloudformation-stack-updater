@@ -38,7 +38,6 @@ class StackUpdateHandler {
     val cloudFormation = new AmazonCloudFormationClient().withRegion[AmazonCloudFormationClient](RegionUtils.getRegion(region))
     cloudFormation.updateStack(new UpdateStackRequest()
       .withStackName(stackName)
-      .with
       .withUsePreviousTemplate(true)
       .withCapabilities("CAPABILITY_IAM")
       .withParameters(params.map{case (key, value) => new Parameter().withParameterKey(key).withParameterValue(value)}))
