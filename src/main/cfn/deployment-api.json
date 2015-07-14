@@ -130,6 +130,38 @@
     },
     "resultQueue": {
       "Type": "AWS::SQS::Queue"
+    },
+    "resultQueuePolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "AllowSendMessage-To-From-SNS-Topic",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": [
+                "sqs:SendMessage"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Ref": "resultTopic"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Queues": [
+          {
+            "Ref": "resultQueue"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
