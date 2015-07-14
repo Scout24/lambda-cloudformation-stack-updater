@@ -1,0 +1,11 @@
+#!/bin/bash
+stackname=$1
+
+if [[ -z $stackname ]]
+then
+	echo "usage: $0 <stackname>"
+	exit 1
+fi
+aws cloudformation create-stack --region eu-west-1 --stack-name $stackname \
+    --template-body file://$(pwd)/src/main/cfn/deployment-api.json \
+    --capabilities "CAPABILITY_IAM"
