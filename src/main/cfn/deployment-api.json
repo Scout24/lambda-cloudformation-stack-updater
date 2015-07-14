@@ -8,6 +8,10 @@
       "AllowedPattern": "arn:aws:iam::[0-9]{12}:[\\S]+",
       "ConstraintDescription": "must be a valid Amazon Resource Name e.g. arn:aws:iam::123456789012:role/cld-chain",
       "Default": "arn:aws:iam::202084488265:user/is24-teamcity"
+    },
+    "jarName": {
+      "Type": "String",
+      "Description": "Name of the jar file inside the (hard coded) bucket that contains the stack updating lambda function"
     }
   },
   "Resources": {
@@ -96,7 +100,7 @@
       "Properties" : {
         "Code" : {
           "S3Bucket" : "de.is24.val.update-stack-function",
-          "S3Key" : "update-stack-function-1.0.0.jar"
+          "S3Key" : { "Ref": "jarName" }
         },
         "Description" : "updates a stack using cloudformation",
         "Handler" : "is24.StackUpdateHandler::handler",
