@@ -7,7 +7,7 @@
       "Description": "ARN of the principal that will send stack update messages and listen for results",
       "AllowedPattern": "arn:aws:iam::[0-9]{12}:[\\S]+",
       "ConstraintDescription": "must be a valid Amazon Resource Name e.g. arn:aws:iam::123456789012:role/cld-chain",
-      "Default": "arn:aws:iam::202084488265:user/is24-teamcity"
+      "Default": "arn:aws:iam::202084488265:user/is24-buildagent"
     },
     "jarName": {
       "Type": "String",
@@ -137,7 +137,7 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Sid": "AllowSendMessage-To-From-SNS-Topic",
+              "Sid": "AllowSendMessage-From-SNS-Topic",
               "Effect": "Allow",
               "Principal": {
                 "AWS": "*"
@@ -145,7 +145,7 @@
               "Action": [
                 "sqs:SendMessage"
               ],
-              "Resource": "*",
+              "Resource": { "Ref": "resultQueue" },
               "Condition": {
                 "ArnEquals": {
                   "aws:SourceArn": {
@@ -153,6 +153,20 @@
                   }
                 }
               }
+            },
+            {
+              "Sid": "Allow-Reading-From-CLD-Account",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": { "Ref": "triggeringUserArn" }
+              },
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes"
+              ],
+              "Resource": { "Ref": "resultQueue" }
             }
           ]
         },
