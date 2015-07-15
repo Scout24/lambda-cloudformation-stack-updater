@@ -2,7 +2,7 @@
 stackname=$1
 jarname=$2
 
-if [[  -z $stackname || -z $jarname]]
+if [[ -z $stackname || -z $jarname ]]
 then
         echo "usage: $0 <stackname> <jarname>"
         exit 1
