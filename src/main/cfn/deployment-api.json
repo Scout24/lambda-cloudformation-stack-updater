@@ -19,7 +19,7 @@
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "DisplayName": "Stack update messages",
-        "TopicName": "stackUpdateMessages",
+        "TopicName": { "Ref": "AWS::StackName" },
         "Subscription": [
           {
             "Endpoint": { "Fn::GetAtt": [
@@ -114,7 +114,7 @@
       "Type": "AWS::SNS::Topic",
       "Properties": {
         "DisplayName": "Stack update result messages",
-        "TopicName": "stackUpdateResultMessages",
+        "TopicName": { "Fn::Join": [ "", [ { "Ref": "AWS::StackName" }, "-resultMessages" ]]},
         "Subscription": [
           {
             "Endpoint": {
@@ -134,26 +134,9 @@
     "resultQueuePolicy": {
       "Type": "AWS::SQS::QueuePolicy",
       "Properties": {
-        "PolicyDocument": {
+        "PolicyDocument":{
+          "Version": "2008-10-17",
           "Statement": [
-            {
-              "Sid": "AllowSendMessage-From-SNS-Topic",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "*"
-              },
-              "Action": [
-                "sqs:SendMessage"
-              ],
-              "Resource": { "Ref": "resultQueue" },
-              "Condition": {
-                "ArnEquals": {
-                  "aws:SourceArn": {
-                    "Ref": "resultTopic"
-                  }
-                }
-              }
-            },
             {
               "Sid": "Allow-Reading-From-CLD-Account",
               "Effect": "Allow",
@@ -161,12 +144,25 @@
                 "AWS": { "Ref": "triggeringUserArn" }
               },
               "Action": [
-                "sqs:ReceiveMessage",
-                "sqs:DeleteMessage",
-                "sqs:GetQueueUrl",
-                "sqs:GetQueueAttributes"
+                "SQS:GetQueueUrl",
+                "SQS:ReceiveMessage",
+                "SQS:DeleteMessage"
               ],
-              "Resource": { "Ref": "resultQueue" }
+              "Resource": { "Fn::GetAtt": [ "resultQueue", "Arn" ]}
+            },
+            {
+              "Sid": "Allow-Reading-From-CLD-Account",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "SQS:SendMessage",
+              "Resource": { "Fn::GetAtt": [ "resultQueue", "Arn" ]},
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": { "Ref": "resultTopic" }
+                }
+              }
             }
           ]
         },
@@ -180,19 +176,16 @@
   },
   "Outputs": {
     "inputTopicARN": {
-      "Value": {
-        "Ref": "inputTopic"
-      },
+      "Value": { "Ref": "inputTopic" },
       "Description": "Topic ARN to send stack update messages to"
     },
-    "resultQueueARN": {
-      "Value": {
-        "Fn::GetAtt": [
-          "resultQueue",
-          "Arn"
-        ]
-      },
-      "Description": "Queue that CloudFormation streams updates about stcak update to"
+    "resultQueue": {
+      "Value": { "Ref": "resultQueue" },
+      "Description": "Queue to read CloudFormation update events from"
+    },
+    "resultTopic": {
+      "Value": { "Ref": "resultTopic" },
+      "Description": "Topic to use with CloudFormation updates in order to get update events"
     }
   }
 }
