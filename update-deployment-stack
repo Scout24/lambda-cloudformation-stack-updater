@@ -10,4 +10,4 @@ fi
 
 aws cloudformation update-stack --region eu-west-1 --stack-name $stackname --use-previous-template \
     --capabilities "CAPABILITY_IAM" \
-    --parameters ParameterValue=$jarname,ParameterKey=jarName
+    --parameters "ParameterValue=$jarname,ParameterKey=jarName"

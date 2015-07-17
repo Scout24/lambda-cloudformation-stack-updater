@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SBT_OPTS="-Dfile.encoding=UTF8 -Xms128M -Xmx1012M -Xss1M -XX:+CMSClassUnloadingEnabled"
 ARG=$1
 DEBUG=""
