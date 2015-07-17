@@ -1,6 +1,6 @@
-name := "Lambda CloudFormation Stack Updater"
+name := "lambda-cloudFormation-stack-updater"
 
-version := "1.0.0"
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
 scalaVersion := "2.11.7"
 
