@@ -1,3 +1,0 @@
-#!/bin/bash
-version=$1
-aws s3 cp target/scala-2.11/lambda-test-assembly-1.0.0.jar s3://de.is24.val.update-stack-function/update-stack-function-$version.jar --region eu-west-1
