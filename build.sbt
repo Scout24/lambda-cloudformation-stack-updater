@@ -1,4 +1,4 @@
-name := "lambda-test"
+name := "Lambda CloudFormation Stack Updater"
 
 version := "1.0.0"
 
