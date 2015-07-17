@@ -9,5 +9,5 @@ fi
 
 aws cloudformation create-stack --region eu-west-1 --stack-name $stackname \
     --template-body file://$(pwd)/src/main/cfn/deployment-api.json \
-    --capabilities "CAPABILITY_IAM"
+    --capabilities "CAPABILITY_IAM" \
     --parameters "ParameterValue=$jarname,ParameterKey=jarName"
