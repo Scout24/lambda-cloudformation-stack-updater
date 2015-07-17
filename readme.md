@@ -1,6 +1,7 @@
 # Lambda CloudFormation Stack Updater
 
-Lambda function the triggers CloudFormation stack updates and connects the resulting events with an SQS queue
+Cross-account stack updates through a minimalistic interface and without "permit everything" policies.
+Intended to be used with [AWS deployment notifier](https://github.com/ImmobilienScout24/aws-deployment-notifier).
 
 Intention
 =========
