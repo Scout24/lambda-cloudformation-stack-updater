@@ -61,7 +61,7 @@ TODOs
 
 License
 =======
-The Lambda CloudFormation Stack Updater is licensed under Apache License, Version 2.0
+The Lambda CloudFormation Stack Updater is licensed under [Apache License, Version 2.0](https://github.com/ImmobilienScout24/lambda-cloudformation-stack-updater/blob/master/LICENSE).
 
 
 
