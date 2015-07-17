@@ -1,0 +1,39 @@
+                                                    │
+
+                   CLD Account                      │                      Team Account
+
+                                                    │
+                                                      SNS with
+                     ┌──────────┐                   │ resource
+                     │          │  stackName: app      policy
+Build 35   ───────▶  │          │   version: 35  ┌──┴──────────────────┐           ┌───────────┐
+                     │          │   ───────────▶ │ deployment msgs     │──────────▶│  ....     │
+                     │          │                └──┬──────────────────┘           │     .     │
+                     │    D     │                                                  │     ..    │
+                     │    e     │                   │                   Validation │    ...    │
+                     │    p     │                                                  │   .. ..   │
+                     │    l     │                   │                 IAM policies │  ..    .  │
+                     │    o     │                                                  │           │
+                     │    y     │                   │                              └───────────┘
+                     │    m     │                                                        │
+                     │    e     │                   │          updateStack(app, params:  │
+                     │    n     │                                       { version: 35 }) │
+                     │    t     │                   │                                    │
+                     │          │                                                        ▼
+                     │    N     │                   │                         ┌────────────────┐
+                     │    o     │                                             │                │
+                     │    t     │                   │                         │ CloudFormation │
+                     │    i     │                                             │                │
+                     │    f     │                   │                         └────────────────┘
+                     │    i     │                                                        │
+                     │    e     │                   │  SQS with                          │
+                     │    r     │                      resource                          │
+                     │          │ getMessages()     │   policy                           ▼  SNS
+                     │          │ ──────────────▶┌─────────────────────┐      ┌────────────────┐
+                     │          │                │ stack update events │◀─────│   update events│
+                     │          │ ◀──────────────└─────────────────────┘      └────────────────┘
+                     │          │                   │
+                     └──────────┘
+                                                    │
+
+                                                    │
