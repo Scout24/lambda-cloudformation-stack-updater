@@ -68,5 +68,5 @@ The Lambda CloudFormation Stack Updater is licensed under [Apache License, Versi
 
 # send notification
 
-    aws sns publish --topic-arn arn:aws:sns:eu-west-1:744969810879:stackUpdateMessages \
-        --message "{ \"stackName\": \"perf-6\", \"region\": \"eu-central-1\", \"params\": { \"dockerImageVersion\": \"$version\"}}"
+    aws sns publish --topic-arn arn:aws:sns:eu-west-1:744969810879:deployment-api-test4 \
+        --message "{\"stackName\": \"performance\", \"notificationARN\": \"arn:aws:sns:eu-west-1:744969810879:deployment-api-test4-resultMessages\", \"region\": \"eu-west-1\", \"params\": { \"dockerImageVersion\": \"69\"}}"

@@ -12,6 +12,11 @@
     "jarName": {
       "Type": "String",
       "Description": "Name of the jar file inside the (hard coded) bucket that contains the stack updating lambda function"
+    },
+    "bucketName": {
+      "Type": "String",
+      "Description": "Bucket that contains the Lambda function jar file",
+      "Default": "de.is24.val.update-stack-function"
     }
   },
   "Resources": {
@@ -99,7 +104,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties" : {
         "Code" : {
-          "S3Bucket" : "de.is24.val.update-stack-function",
+          "S3Bucket" : { "Ref": "bucketName" },
           "S3Key" : { "Ref": "jarName" }
         },
         "Description" : "updates a stack using cloudformation",
@@ -186,6 +191,10 @@
     "resultTopic": {
       "Value": { "Ref": "resultTopic" },
       "Description": "Topic to use with CloudFormation updates in order to get update events"
+    },
+    "lambdaFunctionName": {
+      "Value": { "Ref": "updateStackFunction" },
+      "Description": "Name of the Lambda function, to be used in seperate API call to allow subscription to input topic"
     }
   }
 }
