@@ -52,8 +52,30 @@ Architecture
                                                    │
 
                                                    │
+Setting Up
+==========
+
+The Lambda function is available as ready-to-use Lambda package at:
+    
+    s3://de.is24.val.update-stack-function/update-stack-function-1.0.3.jar
+
+In addition to that, there is a CloudFormation template which sets up all the resources needed in your team account.
+Because CloudFormation is currently not able to grant SNS permissions to invoke the Lambda function this is implemented
+in `bin/create-deployment-stack.sh`:
+ 
+    $ bin/create-deployment-stack.sh STACKNAME update-stack-function-1.0.3.jar
+
+Now your deployment API is ready to use.
+
 Usage
 =====
+
+In order to provide the function with all the necessary data the client needs to parametrized:
+
+* SNS input topic
+* 
+
+The values are available as output parameters of the stack that was created during setup.
 
 
 TODOs
