@@ -87,8 +87,8 @@ output parameter `resultQueue`.
 
 Usage
 =====
-*We strongly suggest to use [AWS deployment notifier](https://github.com/ImmobilienScout24/aws-deployment-notifier)
-which builds input messages and parses resulting events for you.*
+**We strongly suggest to use [AWS deployment notifier](https://github.com/ImmobilienScout24/aws-deployment-notifier)
+which builds input messages and parses resulting events for you.**
 
 In case you prefer to do this by yourself here is an example how to send messages using the AWS cli:
 
