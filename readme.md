@@ -51,7 +51,7 @@ Architecture
                                                    │
 Quick reminder SNS & SQS
 ========================
-*SNS* is a distributed *publish-subscribe* system. Messages are *pushed* to subscribers as and when they are sent by publishers to SNS. *SQS* is distributed *queuing* system. Messages are NOT pushed to receivers. Receivers have to *poll SQS* to receive messages. Messages cannot be received by multiple receivers at the same time.
+**SNS** is a distributed **publish-subscribe** system. Messages are **pushed** to subscribers as and when they are sent by publishers to SNS. **SQS** is distributed **queuing** system. Messages are NOT pushed to receivers. Receivers have to **poll SQS** to receive messages. Messages cannot be received by multiple receivers at the same time.
 
 Setting Up
 ==========
