@@ -15,13 +15,13 @@ aws cloudformation create-stack --region eu-west-1 --stack-name ${stackname} \
 # wait for stack to be created
 while [[ ${status} != "CREATE_COMPLETE" ]]; do
     sleep 10
-    status=$(aws cloudformation describe-stacks --stack-name ${stackname} | jq -r '.Stacks[0].StackStatus')
+    status=$(aws cloudformation describe-stacks --stack-name ${stackname} --output=json | jq -r '.Stacks[0].StackStatus')
     echo ${status}
 done
 
 # grant permissions to invoke function by SNS, this cannot be done by CloudFormation
-functionName=$(aws cloudformation describe-stacks --stack-name ${stackname} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="lambdaFunctionName") | .OutputValue')
-inputTopic=$(aws cloudformation describe-stacks --stack-name ${stackname} | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="inputTopicARN") | .OutputValue')
+functionName=$(aws cloudformation describe-stacks --stack-name ${stackname} --output=json | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="lambdaFunctionName") | .OutputValue')
+inputTopic=$(aws cloudformation describe-stacks --stack-name ${stackname} --output=json | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="inputTopicARN") | .OutputValue')
 
 aws lambda add-permission \
     --function-name ${functionName} \
