@@ -61,7 +61,7 @@ The Lambda function is available as ready-to-use package at:
 
 In addition to that, there is a CloudFormation template `src/main/cfn/deployment-api.json` which sets up all the
 resources needed in your team account. Because CloudFormation is currently not able to grant SNS permissions to invoke
-the Lambda function this is implemented in `bin/create-deployment-stack.sh`:
+the Lambda function this is implemented in `bin/create-deployment-stack.sh`. This script requires command line json parser [jq](https://stedolan.github.io/jq/download/):
  
     $ bin/create-deployment-stack.sh STACKNAME update-stack-function-1.0.3.jar
 
