@@ -5,7 +5,7 @@ app_home=.
 version=$1
 sbtLauncherJar=sbt-launch-0.13.8.jar
 case $version in
-  ''|*[!0-9]*)
+  ''|*[!0-9.]*)
     echo "usage: build.sh versionNumber"
     exit 1
     ;;
