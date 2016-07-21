@@ -115,6 +115,15 @@
         "Timeout" : 15
       }
     },
+    "LambdaPermission": {
+      "Type" : "AWS::Lambda::Permission",
+      "Properties" : {
+        "Action" : "lambda:invokeFunction",
+        "FunctionName" : { "Ref" : "updateStackFunction" },
+        "Principal" : "sns.amazonaws.com",
+        "SourceArn" : { "Ref" : "inputTopic" }
+      }
+    },
     "resultTopic": {
       "Type": "AWS::SNS::Topic",
       "Properties": {
